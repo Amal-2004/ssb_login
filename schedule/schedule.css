@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+*{
+    margin: 0%;
+    padding: 0;
+    box-sizing: border-box;
+}
+body
+{   padding: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+#form1{
+   /* border: red solid 2px;*/
+    position: relative;
+    top: 25px;
+    height: 45px;
+}
+#c1{
+    
+    width:250px;
+     height:45px;
+      position: relative;
+}
+#c2{
+    margin: 10px;
+    height: 45px; 
+}
+#c3{
+    height: 45px;
+    position: relative; 
+    left: 10px
+}
+#class_id{
+    display: inline-block;
+    width: 250px;
+    height: 50px;
+    position: relative;
+    left: 234px;
+    border-radius: 5px;
+    background: #6b6262;
+    text-align: center;
+    padding-top: 13px;
+    color: #fff;
+}
+#tbl{
+    position: relative;top:70px;}
+#csv{
+    position: relative;
+    top: 25px;
+    left: 10px;
+}
+#add{
+    position: relative;
+    top: 25px;
+    left: 20px;
+}
+#deleteConfirmationModel
+{
+    margin-top: 5px;
+}
+#editModel
+{
+    margin-top: 5px;
+    margin-right: 10px;
+}
+
+    @media (max-width: 786px) {
+            .modal-backdrop {
+                opacity: 0.5; /* Adjust the opacity as needed */
+                background-color: transparent; /* Set the background color as needed */
+                position: relative;
+                margin-left:70px;
+            }
+            #tbl{
+                width: 600px;
+            }
+    }
+    
