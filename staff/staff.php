@@ -3,6 +3,7 @@ include "connection.php";
 
 if (isset($_POST['submit'])) {
     $staff_name = $_POST['addName'];
+    $class_id = $_POST['addClassID'];
     $department = $_POST['addDepartment'];
     $email_id = $_POST['addEmail_ID'];
     $password = md5($_POST['password']); 
@@ -10,8 +11,8 @@ if (isset($_POST['submit'])) {
     $designation = $_POST['addDesignation'];
     $isactive = isset($_POST['addIsactive']) ? 1 : 0;
 
-    $sql = "INSERT INTO ssbaide_users (Staff_Name, Department, Email_ID, Password, Fullname, Designation, isactive) 
-            VALUES ('$staff_name', '$department', '$email_id', '$password', '$fullname', '$designation', '$isactive')";
+    $sql = "INSERT INTO ssbaide_users (Staff_Name, Class_ID, Department, Email_ID, Password, Fullname, Designation, isactive) 
+            VALUES ('$staff_name','$class_id', '$department', '$email_id', '$password', '$fullname', '$designation', '$isactive')";
     
     if ($con->query($sql)) {
         header('Location:staff.php');
@@ -93,13 +94,14 @@ if (isset($_POST['delete'])) {
             <th>Email ID</th>
             <th>Fullname</th>
             <th>Designation</th>
+            <th>Class ID</th>
             <th>Active</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
         <?php 
-        $result = $con->query("SELECT S_NO, Staff_Name, Department, Email_ID, Fullname, Designation, isactive FROM ssbaide_users");
+        $result = $con->query("SELECT S_NO, Staff_Name, Department, Email_ID, Fullname, Designation, isactive,Class_ID FROM ssbaide_users");
         if($result->num_rows > 0) {
             $i = 0;
             while($row = $result->fetch_assoc()) {
@@ -112,6 +114,7 @@ if (isset($_POST['delete'])) {
                 <td><?php echo $row['Email_ID'] ?></td>
                 <td><?php echo $row['Fullname'] ?></td>
                 <td><?php echo $row['Designation'] ?></td>
+                <td><?php echo $row['Class_ID'] ?></td>
                 <td><?php echo $row['isactive'] ?></td>
                 <td>
                 <button type="button" class="btn btn-success" onclick="openEditModal(
@@ -144,6 +147,11 @@ if (isset($_POST['delete'])) {
                         <label for="addName" class="form-label">Staff Name</label>
                         <input type="text" name="addName" class="form-control" id="addStaffname" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="addClassID" class="form-label">Class ID</label>
+                        <input type="text" name="addClassID" class="form-control" id="addClassID" required>
+                    </div>
+
                     <div class="mb-3">
                         <label for="addDepartment" class="form-label">Department</label>
                         <input type="text" name="addDepartment" class="form-control" id="addDepartment" required>

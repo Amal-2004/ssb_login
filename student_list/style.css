@@ -1,0 +1,46 @@
+*{
+    margin: 0px;
+    padding: 0px;
+
+}
+
+body{
+height: auto;
+min-height: 1500px;
+width: 1000px;
+margin: 0 auto;
+background-color: rgb(151, 223, 228);
+padding: 5px;
+color: #2c3e50;
+font-size: 125%;
+}
+table{
+    border-collapse: collapse;
+    border: 1px solid rgb(141, 200, 218);
+    width: 100%;
+    margin-top: 10px;
+}
+
+table td,table th{
+    padding: 10px;
+    border: 1px solid gray;
+    text-align: left;
+
+}
+h1{
+    text-transform: uppercase;
+    text-align: center;
+    padding: 20px;
+    color: #e6367f;
+
+}
+h3{
+    padding: 20px;
+}
+button{
+    align-self: center;
+    padding: 5px 25px 5px 25px;
+    background: #6b2ecc;
+    border:navy;
+    color:white;
+}

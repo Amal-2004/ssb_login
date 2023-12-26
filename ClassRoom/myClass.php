@@ -70,12 +70,12 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             'fullname' => $user['Fullname'],
             'designation' => $user['Designation'],
             'expire' => time() + 3660,
+            'Class_ID' => $user['Class_ID'],
         ];
 
         $jwt = createJWT($payload, $key);
 
-        setcookie('session_id', $jwt, time() + 3660, '/');
-
+        setcookie('session_id', $jwt, time() + 3660, '/'); 
         header('Location:ClassRoom/myClass.php');
         exit;
     } else {
@@ -208,8 +208,13 @@ function getClassFromID($classID) {
                     
                         <p id="subject"><?php echo $row['Sub_Name']; ?></p>
                         
-                        <div class="activeIcon" id="icon"></div>
-                    </div>
+                        <div class="activeIcon" id="icon">
+    <?php
+    $classID = $row['Class_ID'];
+    echo "<a href=\"attendance_sheet.php?class_id=$classID\">View Attendance</a>";
+    ?>
+</div>
+
                 <?php endforeach; ?>
             <?php else: ?>
                 <p>No schedule available for this staff.</p>
@@ -225,8 +230,8 @@ function getClassFromID($classID) {
           </div>
         </div>
       </div>
-            -->
-      <script src="myClass.js"></script>
+           
+      <script src="myClass.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

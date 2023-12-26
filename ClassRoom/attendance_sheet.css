@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+*
+{
+    font-family: 'Poppins', sans-serif;
+}
+#tbl{
+    position: absolute;
+    top: 130px;
+    left: 250px;
+    width: 70%;
+}
+h2{
+    position: absolute;
+    top: 70px;
+    font-weight: bold;
+    left: 760px;
+}
+label {
+    margin-right: 30px;
+}
+#save{
+    position: absolute;
+    top: 660px;
+    left: 770px;
+}
+@media(max-width:768px){
+    #tbl{
+        left: 10px;
+        padding-right: 15px;
+        width: 100%;
+    }
+    h2{
+        left: 180px;
+    }
+    label{
+        margin-right: 20px;
+    }
+    #save{
+        top: 930px;
+        left: 190px;
+    }
+}

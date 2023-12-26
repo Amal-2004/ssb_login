@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+*{
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+}
+body
+{
+    font-family: 'Poppins', sans-serif;
+    padding: 20px;
+}
+
+#delete
+{
+    margin-top: 5px;
+}
+
+#edit
+{
+    margin-top: 5px;
+    margin-right: 10px;
+}
+    @media (max-width: 786px) {
+            .modal-backdrop {
+                opacity: 0.5; /* Adjust the opacity as needed */
+                background-color: transparent; /* Set the background color as needed */
+                position: relative;
+                margin-left:70px;
+            }
+            
+        }
+    

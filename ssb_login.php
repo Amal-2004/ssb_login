@@ -67,7 +67,8 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             'Password' => $user['Password'],
             'fullname' => $user['Fullname'],
             'designation' => $user['Designation'],
-            'expire' => time() + 3660, // Token expiration time (adjust as needed)
+            'expire' => time() + 3660,
+            'Class_ID' => $user['Class_ID'], // Token expiration time (adjust as needed)
         ];
 
         $jwt = createJWT($payload, $key);

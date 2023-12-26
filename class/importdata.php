@@ -14,27 +14,26 @@ if (isset($_POST['submit'])) {
             if ($csvFile) {
                 fgetcsv($csvFile); 
                 while (($line = fgetcsv($csvFile)) !== FALSE) {
+                    
                     $S_NO = $line[0];
-                    $Staff_Name = $line[1];
+                    $Class_Name = $line[1];
                     $Department = $line[2];
-                    $Email_ID = $line[3];
-                    $Fullname = $line[4];
-                    $Designation = $line[5];
-                    $isactive = $line[6];
-                    $Class_ID = $line[7]; // Add this line for the Class_ID
+                    $Advisor = $line[3];
+                    
+                    
 
-                    $sql = "SELECT S_NO FROM ssbaide_users WHERE Email_ID = '{$Email_ID}' ";
+                    $sql = "SELECT S_NO FROM ssb_classlist WHERE Advisor = '{$Advisor}' ";
                     $res = $con->query($sql);
 
                     if ($res->num_rows > 0) {
-                        $s = "UPDATE ssbaide_users SET S_NO='$S_NO', Staff_Name='$Staff_Name', Department='$Department', Email_ID='$Email_ID',  Fullname='$Fullname', Designation='$Designation', isactive='$isactive'WHERE Email_ID='$Email_ID'";
+                        $s = "UPDATE ssb_classlist SET name='$S_NO', Class_Name='$Class_Name', Department='$Department', Advisor='$Advisor' WHERE Advisor='$Advisor'";
                         $con->query($s);
                     } else {
-                        $s = "INSERT INTO ssbaide_users (S_NO, Staff_Name, Department, Email_ID,  Fullname, Designation, isactive, Class_ID) VALUES ('$S_NO', '$Staff_Name', '$Department', '$Email_ID',  '$Fullname', '$Designation', '$isactive', '$Class_ID')";
+                        $s = "INSERT INTO ssb_classlist (S_NO, Class_Name,Department, Advisor) VALUES ('$S_NO', '$Class_Name', '$Department', '$Advisor')";
                         $con->query($s);
                     }
                 }
-                fclose($csvFile);
+                fclose($csvFile); 
                 $q = '?status=success';
             } else {
                 $q = "?status=invalid_file";
