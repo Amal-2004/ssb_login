@@ -55,9 +55,21 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     $query = "SELECT * FROM ssbaide_users WHERE Email_ID = '$email' AND Password = '$password'";
     $result = $con->query($query);
 
+
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-
+    
+        // Fetch schedule data for the user
+        $scheduleQuery = "SELECT Class_ID, Day_Order, Sub_Name, Hr, Staff_ID, SUB_Code FROM ssb_schedule WHERE Staff_ID = '{$user['Staff_ID']}'";
+        $scheduleResult = $con->query($scheduleQuery);
+    
+        $scheduleData = [];
+        if ($scheduleResult->num_rows > 0) {
+            while ($row = $scheduleResult->fetch_assoc()) {
+                $scheduleData[] = $row;
+            }
+        }
+    
         $payload = [
             'S_NO' => $user['S_NO'],
             'Staff_ID' => $user['Staff_ID'],
@@ -68,14 +80,15 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             'fullname' => $user['Fullname'],
             'designation' => $user['Designation'],
             'expire' => time() + 3660,
-            'Class_ID' => $user['Class_ID'], // Token expiration time (adjust as needed)
+            'Class_ID' => $user['Class_ID'],
+            'schedule' => $scheduleData, // Include schedule data in the payload
         ];
-
+    
         $jwt = createJWT($payload, $key);
-
+    
         setcookie('session_id', $jwt, time() + 3660, '/');
-
-        header('Location:ClassRoom/myClass.php');
+    
+        header('Location: ClassRoom/myClass.php');
         exit;
     } else {
         //echo "Login failed. Please check your email and password.";
@@ -84,32 +97,23 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     //echo "Please enter both email and password.";
 }
 
-// If you have an existing session, you can verify it like this:
-    if (isset($_COOKIE['session_id'])) {
-        
-         //   $key = "passkey"; 
-        $decoded_payload = verifyJWT($_COOKIE['session_id'], $key);
-   //     echo 'Decoded payload is: <pre>';
-     //   print_r($decoded_payload);
-       // echo '</pre>';
+$key = "passkey";
 
-        if ($decoded_payload) {
-            // Session is valid, you can use $decoded_payload
-            $user_id = $decoded_payload['S_NO'];
-            $user_email = $decoded_payload['email'];
+// If you have an existing session, you can verify it like this:
+if (isset($_COOKIE['session_id'])) {
+    $decoded_payload = verifyJWT($_COOKIE['session_id'], $key);
+
+    if ($decoded_payload) {
     
-            // Print decoded information
-            //echo "User ID: $user_id<br>";
-            //echo "User Email: $user_email<br>";
-       // header('Location:ClassRoom/myClass.php');
-       // exit;
-    } else {
-        // Invalid session, take appropriate action (e.g., redirect to login)
-        header('Location:ssb_login.php');
+        $user_id = $decoded_payload['S_NO'];
+        $user_email = $decoded_payload['email'];
+
+        header('Location:ClassRoom/myClass.php');
         exit;
+    } else {
+        // Invalid session, continue with the login form
     }
-}
-    
+}    
 ?>
 
 

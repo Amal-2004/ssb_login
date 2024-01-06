@@ -1,11 +1,14 @@
 <?php
 include("connection.php");
 
+
+
 function base64UrlEncode($data)
 {
     $urlSafeData = strtr(base64_encode($data), '+/', '-_');
     return rtrim($urlSafeData, '=');
 }
+
 
 function createJWT($payload, $key)
 {
@@ -48,70 +51,38 @@ function verifyJWT($token, $key)
 
 $key = "passkey";
 
-if (isset($_POST['email']) && isset($_POST['password'])) {
-    $email = $_POST['email'];
-    $password = md5($_POST['password']);
+// Check if the class_id is set in the cookie
+if (isset($_COOKIE['session_id'])) {
+    // Assuming the session_id cookie contains the JWT
+    $jwt = $_COOKIE['session_id'];
 
-    $query = "SELECT * FROM ssbaide_users WHERE Email_ID = '$email' AND Password = '$password'";
-    $result = $con->query($query);
+    // Verify the JWT
+    $decoded = verifyJWT($jwt, $key);
 
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
+    // Check if the JWT is valid and has the necessary information
+    if ($decoded && isset($decoded['Class_ID'])) {
+        //$class_id = $decoded['Class_ID'];
+        $class_id=$_POST['class_id'];
+        // Fetch students for the given class_id
+        $sql = "SELECT * FROM student_list WHERE Class_ID = $class_id";
+        $result = $con->query($sql);
 
-        $payload = [
-            'S_NO' => $user['S_NO'],
-            'Staff_ID' => $user['Staff_ID'],
-            'Staff_Name' => $user['Staff_Name'],
-            'Department' => $user['Department'],
-            'email' => $user['Email_ID'],
-            'Password' => $user['Password'],
-            'fullname' => $user['Fullname'],
-            'designation' => $user['Designation'],
-            'expire' => time() + 3660,
-            'Class_ID' => $user['Class_ID'],
-        ];
-
-        $jwt = createJWT($payload, $key);
-
-        setcookie('session_id', $jwt, time() + 3660, '/');
-
-        header('Location:ClassRoom/myClass.php');
-        exit;
+        if (!$result) {
+            // Handle the case where the SQL query fails
+            echo "Error executing SQL query: " . $con->error;
+            exit;
+        }
     } else {
-        //echo "Login failed. Please check your email and password.";
+        // Handle the case where the JWT is invalid or does not contain the required information
+        echo "Invalid JWT or missing Class ID.";
+        exit;
     }
 } else {
-    //echo "Please enter both email and password.";
+    echo "Class ID not set in the cookie.";
+    exit;
 }
-
-if (isset($_COOKIE['session_id'])) {
-
-    //   $key = "passkey"; 
-    $decoded_payload = verifyJWT($_COOKIE['session_id'], $key);
-    //     echo 'Decoded payload is: <pre>';
-    //   print_r($decoded_payload);
-    // echo '</pre>';
-
-    if ($decoded_payload) {
-        // Session is valid, you can use $decoded_payload
-        $user_id = $decoded_payload['S_NO'];
-        $user_email = $decoded_payload['email'];
-
-        // Print decoded information
-        //echo "User ID: $user_id<br>";
-        //echo "User Email: $user_email<br>";
-        // header('Location:ClassRoom/myClass.php');
-        // exit;
-    } else {
-        // Invalid session, take appropriate action (e.g., redirect to login)
-        header('Location:ssb_login.php');
-        exit;
-    }
-}
-
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -119,55 +90,71 @@ if (isset($_COOKIE['session_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Class Table</title>
+    <title>Attendance Sheet</title>
     <link rel="stylesheet" href="attendance_sheet.css">
 </head>
 
 <body>
-    <nav class="navbar navbar-dark bg-primary fixed-top">
+<nav class="navbar navbar-dark bg-primary fixed-top">
         <a class="navbar-brand" href="#" style="font-weight:bold;">&nbsp;&nbsp; SSB CLASS ROOM</a>
     </nav>
-    <div class="modal fade" id="myModal">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h4 style="text-align: center;">Hour Information</h4>
-                    <form id="addForm">
-                        <p id="head">ICT tool used</p>
-                        <input type="text" id="ICT" class="form-control" required>
-                        <p id="head">Topic</p>
-                        <input type="text" id="topic" class="form-control" required>
-                        <p id="head">Type of Activity</p>
-                        <input type="text" id="activity" class="form-control" required>
-                        <div style="text-align: center; margin-top: 20px;">
-                            <button type="button" class="btn btn-success" onclick="saveModalData()">Next</button>
-                            <button type="button" class="btn btn-danger" onclick="cancel()" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </form>
+    
+    <?php if ($result && $result->num_rows > 0) : ?>
+        <div class="container mt-5">
+            <h4 class="text-center mb-4">Attendance Sheet</h4>
+           <?php //echo $_POST['class_id']; ?>
+            <form id="attendanceForm" method="post" action="insert_json.php" autocomplete="off">
+                <input type="hidden" name="save" value="1">
+                <input type="hidden" name="class_id" value="<?php echo htmlspecialchars($class_id); ?>">
+                <input type="hidden" name="ICT" value="<?php echo htmlspecialchars($_POST['ICT']); ?>">
+                <input type="hidden" name="topic" value="<?php echo htmlspecialchars($_POST['topic']); ?>">
+                <input type="hidden" name="activity" value="<?php echo htmlspecialchars($_POST['activity']); ?>">
+
+                <table class='table table-bordered text-center'>
+                    <thead class='thead'>
+                        <tr>
+                            <th>Register Number</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id='attendanceTableBody'>
+                        <?php
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $row['REG_NO'] . "</td>";
+                            echo "<td>";
+                            echo "<label><input type='radio' name='status[" . $row['REG_NO'] . "]' value='present'> Present</label>";
+                            echo "<label><input type='radio' name='status[" . $row['REG_NO'] . "]' value='absent'> Absent</label>";
+                            echo "<label><input type='radio' name='status[" . $row['REG_NO'] . "]' value='leave'> Leave</label>";
+                            echo "<label><input type='radio' name='status[" . $row['REG_NO'] . "]' value='od'> OD</label>";
+
+                            echo "<label><input type='radio' name='status[" . $row['REG_NO'] . "]' value='tl'> TL</label>";
+                            echo "<label><input type='radio' name='status[" . $row['REG_NO'] . "]' value='fenaulty'> Fenaulty</label>";
+                            echo "</td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
-            </div>
+            </form>
         </div>
-    </div>
-    <h2>III BCA</h2>
-    <table class="table table-bordered text-center" id="tbl" style="display: none;">
-        <thead class="thead">
-            <tr>
-                <th>Register Number</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="attendanceTableBody">
-            <!-- Table content will be dynamically added -->
-        </tbody>
-    </table>
-    <button id="save" class="btn btn-primary">Save</button>
+    <?php else : ?>
+        <div class="container mt-5">
+            <p class="text-center">No students found for the given class.</p>
+        </div>
+    <?php endif; ?>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="attendance_sheet.js"></script>
-
-    <!-- Include fetch.php -->
-    <script src="fetch_data.php"></script>
-
+    <script>
+        function cancel() {
+            window.location.href = 'myClass.php';
+        }
+    </script>
 </body>
 
 </html>

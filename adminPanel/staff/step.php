@@ -13,7 +13,7 @@ $sql = "CREATE TABLE ssbaide_users(
     isactive boolean,
     OTP INT(6),
     OTP_Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    Class_ID INT(6)
+  
     )AUTO_INCREMENT=1001";
     
 

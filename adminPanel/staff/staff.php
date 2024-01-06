@@ -3,7 +3,6 @@ include "connection.php";
 
 if (isset($_POST['submit'])) {
     $staff_name = $_POST['addName'];
-    $class_id = $_POST['addClassID'];
     $department = $_POST['addDepartment'];
     $email_id = $_POST['addEmail_ID'];
     $password = md5($_POST['password']); 
@@ -11,8 +10,8 @@ if (isset($_POST['submit'])) {
     $designation = $_POST['addDesignation'];
     $isactive = isset($_POST['addIsactive']) ? 1 : 0;
 
-    $sql = "INSERT INTO ssbaide_users (Staff_Name, Class_ID, Department, Email_ID, Password, Fullname, Designation, isactive) 
-            VALUES ('$staff_name','$class_id', '$department', '$email_id', '$password', '$fullname', '$designation', '$isactive')";
+    $sql = "INSERT INTO ssbaide_users (Staff_Name,  Department, Email_ID, Password, Fullname, Designation, isactive) 
+            VALUES ('$staff_name', '$department', '$email_id', '$password', '$fullname', '$designation', '$isactive')";
     
     if ($con->query($sql)) {
         header('Location:staff.php');
@@ -76,8 +75,42 @@ if (isset($_POST['delete'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Staff Table</title>
-    <link rel="stylesheet" href="staff.css">
+    <link rel="stylesheet" href="../adminPanel.css">
 </head>
+<body>
+
+<div id="card">
+        <nav class="navbar navbar-dark bg-primary fixed-top">
+            <a class="navbar-brand" href="#" style="font-weight:bold;">&nbsp;&nbsp; SSB CLASS ROOM</a>
+            <a class="navbar-brand" href="#" style="font-weight:bold;">Admin panel&nbsp;&nbsp; &nbsp;&nbsp; </a>
+        </nav> <div id="btn">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                <a href="../adminPanel.php">    
+                <button class="nav-link " id="classList" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="false">Class List</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                   
+                <button class="nav-link active " id="staffListBtn" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="true">Staff List</button>
+                 
+            </li>
+                <li class="nav-item" role="presentation">
+                <a href="../schedule/schedule.php">   
+                <button class="nav-link" id="scheduleListBtn" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Schedule</button>
+                </li>
+                <a href="../student_list/student_list.php">   
+                <li class="nav-item" role="presentation">
+                 
+                <button class="nav-link " id="studentListBtn" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="true">Student List</button>
+ 
+            </li>
+            </a>   
+            </ul>
+        </div>
+        <br><br><br><br>
+        <div id="content">
+
+
 
 <form method="post" action="importdata.php" enctype="multipart/form-data">
 <input type="file" class="btn btn-primary" style="width:250px; height:45px; position: relative; top: 25px;" name="file" />
@@ -94,14 +127,13 @@ if (isset($_POST['delete'])) {
             <th>Email ID</th>
             <th>Fullname</th>
             <th>Designation</th>
-            <th>Class ID</th>
             <th>Active</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
         <?php 
-        $result = $con->query("SELECT S_NO, Staff_Name, Department, Email_ID, Fullname, Designation, isactive,Class_ID FROM ssbaide_users");
+        $result = $con->query("SELECT S_NO, Staff_Name, Department, Email_ID, Fullname, Designation, isactive FROM ssbaide_users");
         if($result->num_rows > 0) {
             $i = 0;
             while($row = $result->fetch_assoc()) {
@@ -114,7 +146,7 @@ if (isset($_POST['delete'])) {
                 <td><?php echo $row['Email_ID'] ?></td>
                 <td><?php echo $row['Fullname'] ?></td>
                 <td><?php echo $row['Designation'] ?></td>
-                <td><?php echo $row['Class_ID'] ?></td>
+               
                 <td><?php echo $row['isactive'] ?></td>
                 <td>
                 <button type="button" class="btn btn-success" onclick="openEditModal(
@@ -256,6 +288,8 @@ if (isset($_POST['delete'])) {
     </div>
 </div>
 
+</div>
+    </div>  
     <script src="staff.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -12,7 +12,7 @@ if (isset($_POST['submit'])) {
     
     if ($con->query($sql)) {
       
-        header('Location: class.php');
+        header('Location: ../adminPanel.php');
         exit();
     } else {
        
@@ -29,7 +29,7 @@ if (isset($_POST['update'])) {
     $updateSql = "UPDATE ssb_classlist SET Class_Name='$editClassName', Department='$editDepartment', Advisor='$editAdvisor' WHERE Class_Name='$editClassName'";
     echo $updateSql;
     if ($con->query($updateSql)) {
-        header('Location: class.php');
+        header('Location: ../adminPanel.php');
         exit();
     } else {
         echo "Error updating record: " . $con->error;
@@ -43,7 +43,7 @@ if (isset($_POST['delete'])) {
     $deleteSql = "DELETE FROM ssb_classlist WHERE Class_ID='$deleteClassId'";
 
     if ($con->query($deleteSql)) {
-        header('Location: class.php');
+        header('Location: ../adminPanel.php');
         exit();
     } else {
         echo "Error deleting record: " . $con->error;
@@ -59,11 +59,11 @@ if (isset($_POST['delete'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Class Table</title>
-    <link rel="stylesheet" href="class.css">
+    <link rel="stylesheet" href="class/class.css">
 </head>
 <body>  
 <!--CSV -->
-<form method="post" action="importdata.php" enctype="multipart/form-data">
+<form method="post" action="class/importdata.php" enctype="multipart/form-data">
 <!--<input type="file" name="file" value="upload" id="fileInput" style="display: none;" onchange="open_file()"/>
 <button id="cs" class="btn btn-primary" onclick="document.getElementById('fileInput').click();" style="position: relative; top: 25px;left: 10px" />UPLOAD CSV</button>
 -->
@@ -126,7 +126,7 @@ if (isset($_POST['delete'])) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addUserForm" method="post" action="class.php">
+                    <form id="addUserForm" method="post" action="class/class.php">
                     <input type="hidden" name="s_no" id="s_no">
                     <input type="hidden" name="class_id" id="class_id">
                         <div class="mb-3">
@@ -158,7 +158,7 @@ if (isset($_POST['delete'])) {
 <div class="modal" tabindex="-1" role="dialog" id="editModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-        <form id="editUserForm" method="POST" action="class.php">
+        <form id="editUserForm" method="POST" action="class/class.php">
             <div class="modal-header">
                 
                 <h4 class="modal-title">Edit Class Details</h4>
@@ -193,7 +193,7 @@ if (isset($_POST['delete'])) {
 <div class="modal" tabindex="-1" role="dialog" id="deleteConfirmationModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="POST" action="class.php" id="deleteForm">
+            <form method="POST" action="class/class.php" id="deleteForm">
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Confirmation</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -214,7 +214,7 @@ if (isset($_POST['delete'])) {
     </div>
 </div>
 
-<script src="class.js" defer></script>
+<script src="class/class.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 </html>

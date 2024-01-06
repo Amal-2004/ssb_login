@@ -21,7 +21,7 @@ if (isset($_POST['submit'])) {
                     $Fullname = $line[4];
                     $Designation = $line[5];
                     $isactive = $line[6];
-                    $Class_ID = $line[7]; // Add this line for the Class_ID
+                  // Add this line for the Class_ID
 
                     $sql = "SELECT S_NO FROM ssbaide_users WHERE Email_ID = '{$Email_ID}' ";
                     $res = $con->query($sql);
@@ -30,7 +30,7 @@ if (isset($_POST['submit'])) {
                         $s = "UPDATE ssbaide_users SET S_NO='$S_NO', Staff_Name='$Staff_Name', Department='$Department', Email_ID='$Email_ID',  Fullname='$Fullname', Designation='$Designation', isactive='$isactive'WHERE Email_ID='$Email_ID'";
                         $con->query($s);
                     } else {
-                        $s = "INSERT INTO ssbaide_users (S_NO, Staff_Name, Department, Email_ID,  Fullname, Designation, isactive, Class_ID) VALUES ('$S_NO', '$Staff_Name', '$Department', '$Email_ID',  '$Fullname', '$Designation', '$isactive', '$Class_ID')";
+                        $s = "INSERT INTO ssbaide_users (S_NO, Staff_Name, Department, Email_ID,  Fullname, Designation, isactive) VALUES ('$S_NO', '$Staff_Name', '$Department', '$Email_ID',  '$Fullname', '$Designation', '$isactive')";
                         $con->query($s);
                     }
                 }

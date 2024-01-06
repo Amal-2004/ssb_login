@@ -57,9 +57,21 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     $query = "SELECT * FROM ssbaide_users WHERE Email_ID = '$email' AND Password = '$password'";
     $result = $con->query($query);
 
+
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-
+    
+        // Fetch schedule data for the user
+        $scheduleQuery = "SELECT Class_ID, Day_Order, Sub_Name, Hr, Staff_ID, SUB_Code FROM ssb_schedule WHERE Staff_ID = '{$user['Staff_ID']}'";
+        $scheduleResult = $con->query($scheduleQuery);
+    
+        $scheduleData = [];
+        if ($scheduleResult->num_rows > 0) {
+            while ($row = $scheduleResult->fetch_assoc()) {
+                $scheduleData[] = $row;
+            }
+        }
+    
         $payload = [
             'S_NO' => $user['S_NO'],
             'Staff_ID' => $user['Staff_ID'],
@@ -71,12 +83,14 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             'designation' => $user['Designation'],
             'expire' => time() + 3660,
             'Class_ID' => $user['Class_ID'],
+            'schedule' => $scheduleData, // Include schedule data in the payload
         ];
-
+    
         $jwt = createJWT($payload, $key);
-
-        setcookie('session_id', $jwt, time() + 3660, '/'); 
-        header('Location:ClassRoom/myClass.php');
+    
+        setcookie('session_id', $jwt, time() + 3660, '/');
+    
+        header('Location: ClassRoom/myClass.php');
         exit;
     } else {
         //echo "Login failed. Please check your email and password.";
@@ -85,56 +99,33 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     //echo "Please enter both email and password.";
 }
 
+$key = "passkey";
 
-    if (isset($_COOKIE['session_id'])) {
-        
-         //   $key = "passkey"; 
-        $decoded_payload = verifyJWT($_COOKIE['session_id'], $key);
-   //     echo 'Decoded payload is: <pre>';
-     //   print_r($decoded_payload);
-       // echo '</pre>';
-
-        if ($decoded_payload) {
-            // Session is valid, you can use $decoded_payload
-            $user_id = $decoded_payload['S_NO'];
-            $user_email = $decoded_payload['email'];
-    
-            // Print decoded information
-            //echo "User ID: $user_id<br>";
-            //echo "User Email: $user_email<br>";
-       // header('Location:ClassRoom/myClass.php');
-       // exit;
-    } else {
-        // Invalid session, take appropriate action (e.g., redirect to login)
-        header('Location:ssb_login.php');
-        exit;
-    }
-}
- 
 if (isset($_COOKIE['session_id'])) {
     $decoded_payload = verifyJWT($_COOKIE['session_id'], $key);
 
     if ($decoded_payload) {
+        // Session is valid, you can use $decoded_payload
         $staff_id = $decoded_payload['Staff_ID'];
 
         $selectQuery = "SELECT Class_ID, Day_Order, Sub_Name, Hr, Staff_ID, SUB_Code FROM ssb_schedule WHERE Staff_ID = '$staff_id'";
-        
+
         $result = $con->query($selectQuery);
 
         $scheduleData = [];
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-              $row['ClassName'] = getClassFromID($row['Class_ID']);
-              $scheduleData[] = $row;
+                $row['ClassName'] = getClassFromID($row['Class_ID']);
+                $scheduleData[] = $row;
             }
         }
     } else {
-       
+        // Invalid session, redirect to login
         header('Location:../ssb_login/ssb_login.php');
         exit;
     }
 } else {
-    
+    // Cookie not set, redirect to login
     header('Location:../ssb_login/ssb_login.php');
     exit;
 }
@@ -172,9 +163,9 @@ function getClassFromID($classID) {
         return '1 BBA';
     case 16:
         return '2 BBA';
-    case 16:
+    case 17:
         return '3 BBA';
-    case 16:
+    case 18:
         return '2 Maths';
     default:
         return 'Unknown';
@@ -198,29 +189,77 @@ function getClassFromID($classID) {
       <a class="navbar-brand" id="name" href="#">SSB Class Room</a>
     </div>
   </nav>
-            
-            <?php if (!empty($scheduleData)): ?>
+  <div id="containers">
+  <div class="container-fluid" id="box">
+      <p id="title">My Classes</p>    
+          <?php if (!empty($scheduleData)): ?>
                 <?php foreach ($scheduleData as $row): ?>
-                  <div class="card" id="classCard">
-               <div class="card-body">
-               <h4 id="header"><?php echo $row['ClassName']; ?></h4>
-                    <div class="figure">
-                    
-                        <p id="subject"><?php echo $row['Sub_Name']; ?></p>
-                        
-                        <div class="activeIcon" id="icon">
-    <?php
-    $classID = $row['Class_ID'];
-    echo "<a href=\"attendance_sheet.php?class_id=$classID\">View Attendance</a>";
-    ?>
-</div>
-
+                  <div class="card"  id="classCard">
+                    <div class="card-body" id="classBody">
+                       <div id="Header"> <h4 id="className" ><?php echo $row['ClassName']; ?></h4>
+                            <p id="subjectCode"><?php echo $row['SUB_Code']; ?></p></div>
+                               <div id="buttons"> 
+                               <?php
+                              
+                                $classID = $row['Class_ID'];
+                                echo "<a class='btn btn-primary' id='view'  href=\"model.php?class_id=$classID\">View</a>";
+                                ?>  <button id="hour"type="button" class="btn">
+                                Hour <span class="badge badge-light"><?php echo $row['Hr']?></span>
+                            </button></div>
+                    </div>
+                </div>
                 <?php endforeach; ?>
+    </div>
             <?php else: ?>
                 <p>No schedule available for this staff.</p>
             <?php endif; ?>
-        </div>
-    </div> <!--      
+  
+<!-- 
+            <div class="container-fluid"  id="departmentBox">
+        <p id="myDep">My Department</p>
+            <div class="card" id="departmentCard">
+                <div class="card-body" id="departmentCardBody">
+                    <div class="className">   <h4 >BCA-1</h4></div>
+                    <div class="icons">
+                        <div class="icon-1">
+                            <img src="male.png" alt="Male" id="maleIcon">
+                            <div id="maleCount">
+                                100
+                            </div>
+                        </div>
+                        <div class="icon-2">
+                            <img src="female.png" alt="Female" id="femaleIcon">
+                            <div id="femaleCount">
+                                100
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="departmentCard">
+                <div class="card-body" id="departmentCardBody">
+                    <div class="className">   <h4 >BCA-1</h4></div>
+                    <div class="icons">
+                        <div class="icon-1">
+                            <img src="male.png" alt="Male" id="maleIcon">
+                            <div id="maleCount">
+                                100
+                            </div>
+                        </div>
+                        <div class="icon-2">
+                            <img src="female.png" alt="Female" id="femaleIcon">
+                            <div id="femaleCount">
+                                100
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>         
+  
+
+ -->         <!--      
 <div class="card" id="classCard">
         <div class="card-body">
           <h4 id="header">IT-1</h4>
@@ -231,7 +270,7 @@ function getClassFromID($classID) {
         </div>
       </div>
            
-      <script src="myClass.js"></script> -->
+       <script src="myClass.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

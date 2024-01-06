@@ -75,36 +75,45 @@ $deleteSql = "DELETE FROM ssb_schedule WHERE Class_ID ='$deleteClass_Id'";
     
 </head>
 <body>
+<div id="card">
+        <nav class="navbar navbar-dark bg-primary fixed-top">
+            <a class="navbar-brand" href="#" style="font-weight:bold;">&nbsp;&nbsp; SSB CLASS ROOM</a>
+            <a class="navbar-brand" href="#" style="font-weight:bold;">Admin panel&nbsp;&nbsp; &nbsp;&nbsp; </a>
+        </nav> <div id="btn">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                <a href="../adminPanel.php">    
+                <button class="nav-link " id="classList" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="false">Class List</button>
+                </a>    
+            </li>
+                <li class="nav-item" role="presentation">
+                <a href="../staff/staff.php">   
+                <button class="nav-link" id="staffListBtn" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Staff List</button>
+                </a>    
+            </li>
+                <li class="nav-item" role="presentation">
+                
+                <button class="nav-link active" id="scheduleListBtn" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="true">Schedule</button>
+                </li>
+                <a href="../student_list/student_list.php">   
+                <li class="nav-item" role="presentation">
+                 
+                <button class="nav-link" id="studentListBtn" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Student List</button>
+ 
+            </li>
+            </a>   
+            </ul>
+        </div>
+        <br><br><br><br>
+        <div id="content">
+
+
 <form id="form1" method="post" action="importdata.php" enctype="multipart/form-data">
         <input type="file" id="c1" class="btn btn-primary" name="file" />
         <button type="submit" id="c2" name="submit" class="btn btn-primary" > Import </button>
         <button type="button" id="c3" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">+ </button>
 
       
-
-<div id="class_id"><p>
-
-<?php
-include "connection.php";
-
-$selectQuery = "SELECT Class_ID, Class_Name FROM ssb_classlist where Class_ID=1023";
-
-$result = $con->query($selectQuery);
-
-
-
-if ($result->num_rows > 0) {
- 
-    while ($row = $result->fetch_assoc()) {
-        echo  $row["Class_ID"] ."-". $row["Class_Name"]. "<br>";
-    }
-} else {
-    echo "No results";
-}
-
-?>
-</p>
-</div>
 </form>
 <table id="tbl" class="table table-bordered text-center">
     <thead class="thead" id="head">
@@ -189,9 +198,9 @@ if ($result->num_rows > 0) {
             return '1 BBA';
         case 16:
             return '2 BBA';
-        case 16:
+        case 17:
             return '3 BBA';
-        case 16:
+        case 18:
             return '2 Maths';
         default:
             return 'Unknown';
@@ -314,8 +323,10 @@ if ($result->num_rows > 0) {
             </div>
         </div>
     </div>
+    </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="schedule.js"></script>
+    <script src="schedule.js" defer></script>
     
 </body>
 </html>

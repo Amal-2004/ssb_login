@@ -91,6 +91,41 @@ if (isset($_POST['delete'])) {
     <link rel="stylesheet" href="student_list.css">
 </head>
 <body>    
+
+<div id="card">
+        <nav class="navbar navbar-dark bg-primary fixed-top">
+            <a class="navbar-brand" href="#" style="font-weight:bold;">&nbsp;&nbsp; SSB CLASS ROOM</a>
+            <a class="navbar-brand" href="#" style="font-weight:bold;">Admin panel&nbsp;&nbsp; &nbsp;&nbsp; </a>
+        </nav> <div id="btn">
+            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                
+            <li class="nav-item" role="presentation">
+          <a href="../adminPanel.php">
+            <button class="nav-link " id="classList" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="false">Class List</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                <a href="../staff/staff.php">   
+                <button class="nav-link" id="staffListBtn" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Staff List</button>
+                </a>    
+            </li>
+                <li class="nav-item" role="presentation">
+                <a href="../schedule/schedule.php">   
+                <button class="nav-link" id="scheduleListBtn" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Schedule</button>
+                </a>    
+            </li>
+              
+                <li class="nav-item" role="presentation">
+                 
+                <button class="nav-link active" id="studentListBtn" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="true">Student List</button>
+ 
+            </li>
+            
+            </ul>
+        </div>
+        <br><br><br><br>
+        <div id="content">
+
+
 <form method="post" action="importdata.php" enctype="multipart/form-data">
 
 
@@ -304,6 +339,8 @@ if (isset($_POST['delete'])) {
             </form>
         </div>
     </div>
+</div>
+</div>
 </div>
 
     <script src="student_list.js"></script>
